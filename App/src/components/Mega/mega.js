@@ -1,46 +1,75 @@
-import React, { Component } from 'react'
-import { Button, Text, TextInput } from 'react-native'
+import React, { Component } from "react"
+import { Button, Text, TextInput, View } from 'react-native'
 import estilo from '../../estilo'
 
-export default class Mega extends Component{
+import NumeroMega from "./numeroMega"
+
+export default class Mega extends Component {
+
     state = {
-        qtdeNumero: this.props.qtdeNumero,
-        numero:[]
+        qtdeNumeros: this.props.qtdeNumeros,
+        numeros: []
     }
 
-    alterarQtNumero = (qtde) => {
-        this.setState({ qtdeNumero: +qtde })
+    alterarQtdeNumero = (qtde) => {
+        this.setState({ qtdeNumeros: +qtde })
     }
 
-    gerarNumeros = () =>{
-        const numero = Array (this.state.qtdeNumero)
-        .fill()
-        .reduce(n => [...n, this.gerarNumNaoContido(n)], [])
-        this.setState({numero})
-    }
-
-    gerarNumNaoContido = nums =>{
+    gerarNumeroNaoContido = nums =>{
         const novo = parseInt(Math.random()*60)+1
-        return nums.includes(novo)? this.gerarNumNaoContido(nums): novo
+        return nums.includes(novo) ? this.gerarNumeroNaoContido(nums) : novo
     }
 
-    render(){
-        return(
+   gerarNumeros = () =>{
+        const numeros = Array (this.state.qtdeNumeros)
+        .fill()
+        .reduce(n=> [...n, this.gerarNumeroNaoContido(n)], [])
+        this.setState({numeros})
+    }
+
+    /*gerarNumeros = ( ) =>{
+        const {qtdeNumeros} = this.state
+        const numeros = []
+
+        for(let i = 0; i< qtdeNumeros; i++){
+            const n = this.gerarNumeroNaoContido(numeros)
+            numeros.push(n)
+        }
+
+        numeros.sort((a,b) => a-b)
+        this.setState({numeros})
+    }*/
+
+        exibirNumeros = () =>{
+            const nums = this.state.numeros
+            return nums.map(num => {
+                return <NumeroMega key={num} num={num}/>
+            })
+        }
+
+    render() {
+        return (
             <>
-            <Text style={estilo.fontG}>
-                Gerador de Mega-sena
-            </Text>
-            <TextInput
-                keyboardType= {'numeric'}
-                style = {{borderBottomWidth: 1}}
-                placeholder='Qtde de Números'
-                value = {this.state.qtdeNumero}
-                onChangeText={this.alterarQtNumero}
-            />
-            <Button title='Gerar' onPress={this.gerarNumeros}/>
-            <Text>
-                {this.state.numero.join(',')}
-            </Text>
+                <Text style={estilo.fontG}>
+                    Gerador de Mega-Sena
+                </Text>
+                <TextInput
+                    keyboardType={'numeric'}
+                    style={{borderBottomWidth: 1}}
+                    placeholder="Qtde de Números"
+                    value={this.state.qtdeNumeros}
+                    onChangeText={this.alterarQtdeNumero}
+                />
+                <Button title='Gerar' 
+                onPress={this.gerarNumeros}/>
+                <View style={{
+                    marginTop: 20, 
+                    flexDirection: 'row',
+                    flexWrap: 'wrap',
+                    justifyContent:'center'
+                }}>
+                    {this.exibirNumeros()}
+                </View>
             </>
         )
     }
